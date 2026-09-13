@@ -1,0 +1,234 @@
+// Personal AI workspace — database schema.
+//
+// Scope note: everything except `Inquiry` and `ChatMessage` is PRIVATE data,
+// reachable only from authenticated dashboard routes. The public portfolio and
+// the public chatbot never query these tables.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ---------------------------------------------------------------- auth
+
+/// Single-owner account. Credentials auth — one row in practice.
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  name         String?
+  passwordHash String
+  /// Telegram sender id authorized to create tasks by message.
+  telegramId   String?  @unique
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  tasks         Task[]
+  projects      WorkProject[]
+  journal       JournalEntry[]
+  notes         LearningNote[]
+  inboundEvents InboundMessage[]
+
+  @@map("users")
+}
+
+// ------------------------------------------------------------ freelance
+
+enum InquiryStatus {
+  NEW
+  READ
+  REPLIED
+  ARCHIVED
+  SPAM
+}
+
+/// Freelance project inquiries submitted from the public site.
+model Inquiry {
+  id           String        @id @default(cuid())
+  name         String
+  email        String
+  company      String?
+  projectType  String
+  description  String
+  budgetRange  String?
+  timeline     String?
+  requirements String?
+  status       InquiryStatus @default(NEW)
+  /// Retained for rate limiting and abuse review only.
+  ipHash       String?
+  userAgent    String?
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+
+  @@index([status, createdAt])
+  @@map("inquiries")
+}
+
+// ----------------------------------------------------------------- work
+
+enum TaskStatus {
+  TODO
+  IN_PROGRESS
+  COMPLETED
+  BLOCKED
+  ARCHIVED
+}
+
+enum TaskCategory {
+  WORK
+  LEARNING
+  FREELANCING
+  PERSONAL_PROJECT
+  DSA
+  AI_ML
+  RESEARCH
+  OTHER
+}
+
+enum TaskPriority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+}
+
+/// A project bucket for grouping tasks in the dashboard.
+model WorkProject {
+  id        String   @id @default(cuid())
+  userId    String
+  name      String
+  slug      String
+  /// Employer, client or "personal" — free text, not a public field.
+  context   String?
+  color     String?
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user    User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tasks   Task[]
+  journal JournalEntry[]
+
+  @@unique([userId, slug])
+  @@map("work_projects")
+}
+
+model Task {
+  id          String       @id @default(cuid())
+  userId      String
+  projectId   String?
+  title       String
+  description String?
+  /// The day the work belongs to, not the row's creation time.
+  date        DateTime     @db.Date
+  status      TaskStatus   @default(TODO)
+  category    TaskCategory @default(WORK)
+  priority    TaskPriority @default(MEDIUM)
+  /// Minutes.
+  timeSpent   Int?
+  notes       String?
+  tags        String[]     @default([])
+  nextSteps   String[]     @default([])
+  completedAt DateTime?
+  /// How the row arrived: "web" | "telegram" | "import".
+  source      String       @default("web")
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  user    User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  project WorkProject?     @relation(fields: [projectId], references: [id], onDelete: SetNull)
+  origin  InboundMessage[]
+
+  @@index([userId, date])
+  @@index([userId, status])
+  @@index([userId, category])
+  @@map("tasks")
+}
+
+/// Free-form daily work journal, separate from discrete tasks.
+model JournalEntry {
+  id        String   @id @default(cuid())
+  userId    String
+  projectId String?
+  date      DateTime @db.Date
+  title     String?
+  body      String
+  tags      String[] @default([])
+  mood      String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user    User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  project WorkProject? @relation(fields: [projectId], references: [id], onDelete: SetNull)
+
+  @@index([userId, date])
+  @@map("journal_entries")
+}
+
+model LearningNote {
+  id        String   @id @default(cuid())
+  userId    String
+  topic     String
+  title     String
+  body      String
+  source    String?
+  tags      String[] @default([])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, topic])
+  @@map("learning_notes")
+}
+
+// ------------------------------------------------------------ messaging
+
+enum InboundStatus {
+  RECEIVED
+  PROCESSED
+  NEEDS_CLARIFICATION
+  REJECTED
+  FAILED
+}
+
+/// Raw messages received from Telegram, kept so an extraction can be
+/// re-run or audited without losing the original text.
+model InboundMessage {
+  id             String        @id @default(cuid())
+  userId         String?
+  /// Telegram chat/sender id the message arrived from.
+  externalId     String
+  channel        String        @default("telegram")
+  text           String
+  status         InboundStatus @default(RECEIVED)
+  /// Structured task the model extracted, kept verbatim for auditing.
+  extracted      Json?
+  error          String?
+  createdTaskId  String?
+  processedAt    DateTime?
+  createdAt      DateTime      @default(now())
+
+  user        User? @relation(fields: [userId], references: [id], onDelete: SetNull)
+  createdTask Task? @relation(fields: [createdTaskId], references: [id], onDelete: SetNull)
+
+  @@index([externalId, createdAt])
+  @@map("inbound_messages")
+}
+
+// ----------------------------------------------------------------- chat
+
+/// Public portfolio chatbot transcripts. Anonymous — no visitor identity
+/// beyond a rotating session id, kept to review answer quality.
+model ChatMessage {
+  id        String   @id @default(cuid())
+  sessionId String
+  role      String
+  content   String
+  createdAt DateTime @default(now())
+
+  @@index([sessionId, createdAt])
+  @@map("chat_messages")
+}
