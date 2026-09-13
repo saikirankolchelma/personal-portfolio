@@ -20,7 +20,7 @@ Two halves of one application:
 | Database   | PostgreSQL (Neon / Vercel Postgres) via Prisma 7     |
 | Auth       | NextAuth v5 credentials, single owner account        |
 | AI         | Google Gemini, server-side only                      |
-| Messaging  | Telegram Bot API webhook (planned)                   |
+| Messaging  | Telegram Bot API webhook                              |
 | Deployment | Vercel                                               |
 
 ---
@@ -150,7 +150,7 @@ Current state — Phase 1 complete:
 - ✅ Voice agent — browser speech-to-text and text-to-speech over the same endpoint
 - ✅ Private dashboard — auth, tasks, inquiries inbox, work analytics
 - ✅ Private work assistant — answers from your own task history
-- ⬜ Telegram message → task ingestion
+- ✅ Telegram message → task ingestion
 
 ### Turning the assistant on
 
@@ -189,6 +189,48 @@ Defence in depth, because a proxy check is not an authorization boundary:
 3. Every data function takes a `userId` and folds it into the `where` clause,
    so a forged task id matches zero rows rather than someone else's.
 4. Server actions resolve the owner from the session — no caller supplies an id.
+
+---
+
+## Logging work from your phone
+
+Send the bot a plain message and it files a task:
+
+> “Finished the CUSTOM_RAG top_k and similarity threshold changes. Need to test MMR tomorrow.”
+
+Gemini extracts the title, description, status, category, priority, date, tags
+and next steps against a response schema — not a polite request for JSON — so
+parsing is deterministic. When a message is too vague to record, it asks a
+question instead of inventing a task.
+
+Commands: `/today`, `/pending`, `/week`, `/done <text>`, `/help`.
+
+### Setup
+
+1. Create a bot with [@BotFather](https://t.me/botfather) → `TELEGRAM_BOT_TOKEN`.
+2. Get your numeric Telegram user id (e.g. from [@userinfobot](https://t.me/userinfobot)) → `TELEGRAM_ALLOWED_USER_ID`.
+3. Generate a secret: `openssl rand -hex 24` → `TELEGRAM_WEBHOOK_SECRET`.
+4. Re-run `npm run db:seed` so the account is linked to that Telegram id.
+5. Register the webhook (needs your deployed HTTPS URL in `NEXT_PUBLIC_SITE_URL`):
+
+```bash
+npm run telegram:setup           # register
+npm run telegram:setup -- info   # inspect what Telegram has
+npm run telegram:setup -- delete # unregister
+```
+
+### Why only you can use it
+
+Two independent gates, both required before anything is written:
+
+1. **The webhook secret.** Telegram echoes it in `X-Telegram-Bot-Api-Secret-Token`;
+   a missing or wrong value gets a 401 and is never parsed.
+2. **The sender id.** It must equal `TELEGRAM_ALLOWED_USER_ID`. Anyone else who
+   finds your bot gets a refusal and writes nothing.
+
+Every inbound message is stored verbatim before extraction runs, so a failed
+extraction never loses what you sent — it stays in `inbound_messages` to be
+retried or read from the dashboard.
 
 ---
 
