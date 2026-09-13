@@ -249,8 +249,12 @@ retried or read from the dashboard.
 
 ## Deployment
 
-Deploys to Vercel from GitHub. Set every variable from `.env.example` in the
-Vercel project settings, then:
+See **[DEPLOYMENT.md](DEPLOYMENT.md)** for the full runbook — Neon, Vercel and
+Telegram, with a verification step after each.
+
+Short version: deploys to Vercel from GitHub, with every variable from
+`.env.example` set in the project settings. `prisma generate` runs on install
+via `postinstall`, which Vercel needs because it caches `node_modules`.
 
 ```bash
 npm run check    # typecheck + lint + build must all pass
