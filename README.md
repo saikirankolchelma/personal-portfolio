@@ -18,8 +18,8 @@ Two halves of one application:
 | Styling    | Tailwind CSS v4, CSS-variable design tokens          |
 | Animation  | Framer Motion, CSS keyframes                         |
 | Database   | PostgreSQL (Neon / Vercel Postgres) via Prisma 7     |
-| Auth       | NextAuth credentials, single owner account (planned) |
-| AI         | Google Gemini, server-side only (planned)            |
+| Auth       | NextAuth v5 credentials, single owner account        |
+| AI         | Google Gemini, server-side only                      |
 | Messaging  | Telegram Bot API webhook (planned)                   |
 | Deployment | Vercel                                               |
 
@@ -42,6 +42,7 @@ The site runs at <http://localhost:3000>.
 | `DATABASE_URL`    | Inquiry form returns a clear "not connected yet" message with the email fallback |
 | `GEMINI_API_KEY`  | Chatbot and voice agent unavailable (not yet built)                             |
 | `TELEGRAM_*`      | Message-to-task ingestion unavailable (not yet built)                           |
+| `AUTH_SECRET`     | Sign-in fails — generate one with `openssl rand -base64 32`                     |
 
 ### Database setup
 
@@ -82,7 +83,12 @@ src/
 │  ├─ freelance/               Services + inquiry form
 │  ├─ contact/                 Contact channels
 │  ├─ play/                    Games and productivity tools
+│  ├─ (site)/                  Public pages (header, footer, assistant)
+│  ├─ dashboard/               Private workspace — no public chrome
+│  ├─ login/                   Owner sign-in
 │  ├─ api/inquiries/           Freelance inquiry intake
+│  ├─ api/chat/                Public assistant (streaming)
+│  ├─ api/dashboard/assistant/ Private work assistant (authenticated)
 │  ├─ sitemap.ts, robots.ts    SEO
 │  └─ globals.css              Design tokens
 ├─ components/
@@ -142,7 +148,8 @@ Current state — Phase 1 complete:
 - ✅ Games and tools (Tic-Tac-Toe, Snake, Pomodoro)
 - ✅ Gemini assistant — streaming, grounded in the content layer
 - ✅ Voice agent — browser speech-to-text and text-to-speech over the same endpoint
-- ⬜ Private dashboard and auth
+- ✅ Private dashboard — auth, tasks, inquiries inbox, work analytics
+- ✅ Private work assistant — answers from your own task history
 - ⬜ Telegram message → task ingestion
 
 ### Turning the assistant on
@@ -160,6 +167,28 @@ are treated as questions rather than instructions.
 Voice runs entirely in the browser (Web Speech API) — only transcribed text is
 sent to the server. Recognition needs Chrome, Edge or Safari; the mic button is
 hidden where it is unsupported rather than failing on click.
+
+---
+
+## The private dashboard
+
+`/dashboard` is owner-only. There is no sign-up route: the single account is
+created by `npm run db:seed` from `OWNER_EMAIL` and `OWNER_PASSWORD`.
+
+```bash
+npm run db:push     # create tables
+npm run db:seed     # create your account
+```
+
+Then sign in at `/login`.
+
+Defence in depth, because a proxy check is not an authorization boundary:
+
+1. `src/proxy.ts` redirects unauthenticated visitors away from `/dashboard`.
+2. The dashboard layout re-checks the session server-side.
+3. Every data function takes a `userId` and folds it into the `where` clause,
+   so a forged task id matches zero rows rather than someone else's.
+4. Server actions resolve the owner from the session — no caller supplies an id.
 
 ---
 
