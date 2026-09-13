@@ -140,9 +140,26 @@ Current state — Phase 1 complete:
 - ✅ Database schema for all planned phases
 - ✅ SEO: metadata, sitemap, robots, canonical URLs
 - ✅ Games and tools (Tic-Tac-Toe, Snake, Pomodoro)
+- ✅ Gemini assistant — streaming, grounded in the content layer
+- ✅ Voice agent — browser speech-to-text and text-to-speech over the same endpoint
 - ⬜ Private dashboard and auth
-- ⬜ Gemini chatbot and voice agent
 - ⬜ Telegram message → task ingestion
+
+### Turning the assistant on
+
+Set `GEMINI_API_KEY` in `.env.local` (get one at <https://aistudio.google.com/apikey>).
+Until then the widget still renders and returns a clear "not connected yet"
+message with the email fallback — it never fails silently.
+
+The assistant is grounded by `src/lib/knowledge.ts`, which compiles the same
+content modules the pages render. It cannot state anything the site does not
+already say. Its instructions are in `src/lib/gemini.ts`: no fabricated claims,
+no metrics that are not verified, no access to private data, and user messages
+are treated as questions rather than instructions.
+
+Voice runs entirely in the browser (Web Speech API) — only transcribed text is
+sent to the server. Recognition needs Chrome, Edge or Safari; the mic button is
+hidden where it is unsupported rather than failing on click.
 
 ---
 

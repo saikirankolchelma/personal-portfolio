@@ -5,6 +5,7 @@ import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
+import { Assistant } from "@/components/chat/assistant";
 import { site, siteUrl } from "@/lib/site";
 import { profile } from "@/content/profile";
 
@@ -97,6 +98,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
             {children}
           </main>
           <Footer />
+          <Assistant />
         </ThemeProvider>
       </body>
     </html>
