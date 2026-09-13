@@ -145,10 +145,10 @@ Current state — Phase 1 complete:
 - ✅ Freelance inquiry API with validation, honeypot and rate limiting
 - ✅ Database schema for all planned phases
 - ✅ SEO: metadata, sitemap, robots, canonical URLs
-- ✅ Games and tools (Tic-Tac-Toe, Snake, Pomodoro)
+- ✅ Games and tools — chess, tic-tac-toe, snake, memory, typing test, number guess, two quizzes, pomodoro, word counter
 - ✅ Gemini assistant — streaming, grounded in the content layer
 - ✅ Voice agent — browser speech-to-text and text-to-speech over the same endpoint
-- ✅ Private dashboard — auth, tasks, inquiries inbox, work analytics
+- ✅ Private dashboard — auth, tasks, journal, learning notes, projects, inquiries, analytics, export
 - ✅ Private work assistant — answers from your own task history
 - ✅ Telegram message → task ingestion
 

@@ -1,6 +1,7 @@
 import type { MetadataRoute } from "next";
 import { siteUrl } from "@/lib/site";
 import { projects } from "@/content/projects";
+import { playItems } from "@/content/play";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const now = new Date();
@@ -28,6 +29,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
       lastModified: now,
       changeFrequency: "monthly" as const,
       priority: 0.7,
+    })),
+    ...playItems.map((item) => ({
+      url: `${siteUrl}/play/${item.slug}`,
+      lastModified: now,
+      changeFrequency: "yearly" as const,
+      priority: 0.3,
     })),
   ];
 }

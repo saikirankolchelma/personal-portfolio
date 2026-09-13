@@ -3,7 +3,19 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
-import { Bot, CheckSquare, Inbox, LayoutDashboard, LogOut, Menu, X } from "lucide-react";
+import {
+  Bot,
+  BookOpen,
+  CheckSquare,
+  Download,
+  FolderKanban,
+  Inbox,
+  LayoutDashboard,
+  LogOut,
+  Menu,
+  NotebookPen,
+  X,
+} from "lucide-react";
 
 import { dashboardNav } from "@/lib/dashboard-nav";
 import { cn } from "@/lib/utils";
@@ -11,8 +23,12 @@ import { cn } from "@/lib/utils";
 const icons = {
   layout: LayoutDashboard,
   checklist: CheckSquare,
+  book: BookOpen,
+  notes: NotebookPen,
+  folder: FolderKanban,
   bot: Bot,
   inbox: Inbox,
+  download: Download,
 } as const;
 
 export function DashboardSidebar({
