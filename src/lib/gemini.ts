@@ -11,7 +11,12 @@ import { profile } from "@/content/profile";
  * time rather than by convention).
  */
 
-export const GEMINI_MODEL = process.env.GEMINI_MODEL ?? "gemini-2.5-flash";
+/**
+ * Default model. `gemini-2.5-flash` is retired for new API keys, and Google's
+ * own 404 points at the 3.6 line; of the current flash models it is also the
+ * fastest to first token, which is what a chat widget is judged on.
+ */
+export const GEMINI_MODEL = process.env.GEMINI_MODEL ?? "gemini-3.6-flash";
 
 export function isGeminiConfigured() {
   return Boolean(process.env.GEMINI_API_KEY);

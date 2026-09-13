@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 
+import { ThinkingLevel } from "@google/genai";
+
 import {
   GEMINI_MODEL,
   buildSystemInstruction,
@@ -93,9 +95,11 @@ export async function POST(request: Request) {
         systemInstruction: buildSystemInstruction(),
         maxOutputTokens: 800,
         temperature: 0.4,
-        // The profile is long; without a thinking budget of zero, short factual
-        // answers spend most of their token allowance before emitting text.
-        thinkingConfig: { thinkingBudget: 0 },
+        // Grounded lookup over a supplied document needs no deliberation, and
+        // thinking tokens come out of the same budget as the answer.
+        // Gemini 3.x replaced `thinkingBudget` with `thinkingLevel`; passing
+        // the old field is rejected outright with a 400.
+        thinkingConfig: { thinkingLevel: ThinkingLevel.MINIMAL },
       },
     });
 
