@@ -1,4 +1,10 @@
-import "dotenv/config";
+import { config } from "dotenv";
+
+// Next.js loads `.env.local` itself, but a standalone CLI script does not —
+// plain `dotenv/config` only reads `.env`. Load both, most-specific first;
+// dotenv does not overwrite already-set variables, so `.env.local` wins.
+config({ path: ".env.local" });
+config({ path: ".env" });
 
 /**
  * Registers (or inspects) the Telegram webhook.

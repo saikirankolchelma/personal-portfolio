@@ -18,7 +18,21 @@ so treat it as exposed.
 
 ---
 
-## 1 — Database (Neon)
+## Status
+
+| Stage | State |
+| --- | --- |
+| Neon database | **Done** — tables created, account seeded, login verified |
+| Gemini | **Done** — answering, though the key still needs rotating |
+| Telegram bot | Token stored and verified as `@saikiran_assitant_bot`. Needs your numeric user id, and a live URL for the webhook. |
+| GitHub | Needs you — no `gh` CLI on this machine, so the repo and push are yours to run |
+| Vercel | Needs you — after GitHub |
+
+Steps marked Done below are kept for reference and for rebuilding from scratch.
+
+---
+
+## 1 — Database (Neon) — DONE
 
 Neon's free tier is enough for this. Vercel Postgres works identically if you
 prefer it — the connection string is the only thing that differs.
@@ -30,10 +44,13 @@ prefer it — the connection string is the only thing that differs.
    (`Asia Pacific (Singapore)` for Hyderabad)
 3. On the dashboard, find **Connection string**
 4. Select **Pooled connection** from the dropdown — not the direct one
-5. Copy the whole string. It looks like:
+5. Copy the whole string, then change `sslmode=require` to `sslmode=verify-full`:
    ```
-   postgresql://user:password@ep-something-pooler.region.aws.neon.tech/neondb?sslmode=require
+   postgresql://user:password@ep-something-pooler.region.aws.neon.tech/neondb?sslmode=verify-full&channel_binding=require
    ```
+   `node-postgres` now warns that `require` is being treated as `verify-full`
+   anyway. Neon presents a valid certificate chain, so being explicit is both
+   stricter and quieter.
 
 ### Wire it up locally
 
@@ -48,6 +65,15 @@ AUTH_SECRET="<already generated for you — leave it>"
 
 `OWNER_PASSWORD` is your dashboard login. The seed script refuses anything
 under 12 characters, because it is the only account on the system.
+
+To read the generated one without printing it into a shell transcript:
+
+```bash
+grep OWNER_PASSWORD .env.local
+```
+
+To change it: edit that line, then re-run `npm run db:seed`. Re-seeding
+rotates the password rather than creating a second account.
 
 ### Create the tables
 
