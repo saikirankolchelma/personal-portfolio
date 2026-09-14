@@ -1,14 +1,49 @@
 import { profile } from "@/content/profile";
 
+const LOCAL_URL = "http://localhost:3000";
+
 /**
- * Set NEXT_PUBLIC_SITE_URL in the deployment environment. Falls back to the
- * Vercel-provided URL, then to localhost for development.
+ * Resolves the public base URL.
+ *
+ * This runs at module scope and feeds `metadataBase`, so anything it returns
+ * must parse as a URL — a bad value fails the whole build rather than
+ * degrading. It therefore normalises rather than trusting the environment:
+ *
+ *  - Empty and whitespace-only values count as absent. `??` does not catch
+ *    those, and an env var set to "" in a dashboard is easy to do by accident.
+ *  - A bare host ("my-app.vercel.app") gets https:// prepended, since pasting
+ *    the domain without a scheme is the obvious mistake.
+ *  - Trailing slashes are stripped, so canonical links never double up.
+ *  - Anything still unparseable falls back to localhost with a warning,
+ *    because a wrong canonical URL is a smaller problem than no deploy.
  */
-export const siteUrl =
-  process.env.NEXT_PUBLIC_SITE_URL ??
-  (process.env.VERCEL_PROJECT_PRODUCTION_URL
-    ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
-    : "http://localhost:3000");
+function resolveSiteUrl(): string {
+  const candidates = [
+    process.env.NEXT_PUBLIC_SITE_URL,
+    // Set automatically on Vercel, without a protocol.
+    process.env.VERCEL_PROJECT_PRODUCTION_URL,
+  ];
+
+  for (const raw of candidates) {
+    const value = raw?.trim();
+    if (!value) continue;
+
+    const withScheme = /^https?:\/\//i.test(value) ? value : `https://${value}`;
+
+    try {
+      const url = new URL(withScheme);
+      return url.origin;
+    } catch {
+      console.warn(
+        `[site] Ignoring unparseable site URL: ${JSON.stringify(value)}`,
+      );
+    }
+  }
+
+  return LOCAL_URL;
+}
+
+export const siteUrl = resolveSiteUrl();
 
 export const site = {
   name: profile.name,
