@@ -18,14 +18,31 @@ import { profile } from "@/content/profile";
  */
 export const GEMINI_MODEL = process.env.GEMINI_MODEL ?? "gemini-3.6-flash";
 
+/**
+ * Reads the API key, tolerating how it tends to arrive from a hosting
+ * dashboard: with a trailing newline from a copy-paste, or wrapped in the
+ * quotes that were around it in the `.env` file it was copied from.
+ *
+ * Both survive `Boolean()`, so without this a mangled key reports as
+ * configured and then fails at request time as an opaque auth error. A
+ * whitespace-only value is treated as absent instead, which surfaces the
+ * honest "not connected yet" message.
+ */
+function readApiKey(): string | null {
+  const raw = process.env.GEMINI_API_KEY?.trim();
+  if (!raw) return null;
+  const unquoted = raw.replace(/^["']|["']$/g, "").trim();
+  return unquoted || null;
+}
+
 export function isGeminiConfigured() {
-  return Boolean(process.env.GEMINI_API_KEY);
+  return readApiKey() !== null;
 }
 
 let client: GoogleGenAI | null = null;
 
 export function getGeminiClient(): GoogleGenAI {
-  const apiKey = process.env.GEMINI_API_KEY;
+  const apiKey = readApiKey();
   if (!apiKey) {
     throw new Error("GEMINI_API_KEY is not set.");
   }
