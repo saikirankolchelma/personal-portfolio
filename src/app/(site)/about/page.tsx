@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
-import Image from "next/image";
 import { ArrowRight, Award, GraduationCap, Briefcase, Sparkles } from "lucide-react";
 
+import { Avatar } from "@/components/ui/avatar";
 import { Reveal } from "@/components/ui/reveal";
 import {
   Badge,
@@ -35,7 +35,7 @@ export default function AboutPage() {
       <section className="relative overflow-hidden border-b border-border">
         <div aria-hidden className="pointer-events-none absolute inset-0 grid-bg" />
         <div className="container-px relative py-20 sm:py-28">
-          <div className="grid items-center gap-12 lg:grid-cols-[1.5fr_1fr] lg:gap-16">
+          <div className="grid items-center gap-10 lg:grid-cols-[1.6fr_auto] lg:gap-16">
             <div>
               <p className="mb-4 font-mono text-xs uppercase tracking-[0.2em] text-accent">
                 About
@@ -58,23 +58,10 @@ export default function AboutPage() {
               </div>
             </div>
 
-            {/* Portrait — hidden below lg, where the headline should lead and
-                the photo would only push the summary off-screen. */}
-            <div className="hidden lg:block">
-              <div className="relative overflow-hidden rounded-2xl border border-border bg-surface shadow-[0_24px_70px_-28px_var(--glow)]">
-                <Image
-                  src="/sai-kiran.jpg"
-                  alt={`${profile.name}, ${profile.title}`}
-                  width={768}
-                  height={1364}
-                  sizes="22rem"
-                  className="h-full w-full object-cover"
-                />
-                <div
-                  aria-hidden
-                  className="pointer-events-none absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-surface/90 to-transparent"
-                />
-              </div>
+            {/* Portrait — shown on every size now that it is a compact
+                circle rather than a full-height card. */}
+            <div className="order-first flex justify-center lg:order-none lg:justify-end">
+              <Avatar size="md" priority />
             </div>
           </div>
         </div>

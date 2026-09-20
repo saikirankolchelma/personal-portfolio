@@ -1,9 +1,9 @@
-import Image from "next/image";
 import { ArrowRight, MapPin, Sparkles } from "lucide-react";
 import { profile } from "@/content/profile";
 import { marqueeSkills } from "@/content/skills";
 import { availability } from "@/content/freelance";
 import { ButtonLink } from "@/components/ui/primitives";
+import { Avatar } from "@/components/ui/avatar";
 import { GithubIcon, LinkedinIcon } from "@/components/ui/brand-icons";
 
 export function Hero() {
@@ -27,7 +27,7 @@ export function Hero() {
       <div className="container-px relative pb-16 pt-20 sm:pb-24 sm:pt-28">
         {/* Text and portrait sit side by side from lg up, stacked below it so
             the headline still leads on a phone. */}
-        <div className="grid items-center gap-12 lg:grid-cols-[1.35fr_1fr] lg:gap-16">
+        <div className="grid items-center gap-10 lg:grid-cols-[1.6fr_auto] lg:gap-16">
         <div className="animate-rise">
           {availability.open ? (
             <div className="mb-7 inline-flex items-center gap-2.5 rounded-full border border-border bg-surface/70 py-1.5 pl-2 pr-4 text-xs backdrop-blur">
@@ -107,35 +107,8 @@ export function Hero() {
         </div>
 
         {/* ------------------------------------------------------ portrait */}
-        <div className="animate-rise order-first lg:order-none">
-          <div className="relative mx-auto w-full max-w-[17rem] lg:max-w-none">
-            {/* Accent bloom behind the frame, tucked under it. */}
-            <div
-              aria-hidden
-              className="pointer-events-none absolute -inset-6 rounded-[2rem] opacity-60 blur-3xl"
-              style={{
-                background:
-                  "radial-gradient(60% 60% at 50% 40%, var(--glow), transparent 75%)",
-              }}
-            />
-            <div className="relative overflow-hidden rounded-2xl border border-border bg-surface shadow-[0_24px_70px_-28px_var(--glow)]">
-              <Image
-                src="/sai-kiran.jpg"
-                alt={`${profile.name}, ${profile.title}`}
-                width={768}
-                height={1364}
-                // Above the fold, so it must not lazy-load.
-                priority
-                sizes="(min-width: 1024px) 24rem, 17rem"
-                className="h-full w-full object-cover"
-              />
-              {/* Fades the photo into the card so the crop edge is not stark. */}
-              <div
-                aria-hidden
-                className="pointer-events-none absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-surface/90 to-transparent"
-              />
-            </div>
-          </div>
+        <div className="animate-rise order-first flex justify-center lg:order-none lg:justify-end">
+          <Avatar size="lg" priority />
         </div>
         </div>
       </div>
