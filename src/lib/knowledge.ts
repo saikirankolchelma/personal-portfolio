@@ -125,7 +125,7 @@ export function buildKnowledgeBase(): string {
     `Professional title: ${profile.titleLong}`,
     `Current role: ${profile.currentRole} at ${profile.currentCompany}`,
     `Location: ${profile.location}`,
-    `Experience: ${profile.experienceLabel} (full-time plus internship)`,
+    `Experience: ${profile.experienceLabel}, counting ${profile.experienceBasis}`,
     `Email: ${profile.email}`,
     `LinkedIn: ${profile.links.linkedin}`,
     `GitHub: ${profile.links.github}`,

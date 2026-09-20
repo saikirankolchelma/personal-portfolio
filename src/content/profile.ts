@@ -18,15 +18,21 @@ export const profile = {
   phone: "7288856432",
   tagline: "Building intelligent systems with LLMs, agentic workflows, and retrieval.",
   summary:
-    "AI/ML Engineer with 1+ years of combined full-time and internship experience building enterprise Generative AI, agentic AI, and RAG systems for pharmaceutical and business intelligence use cases. Experienced in LangGraph, LangChain, CrewAI, MCP, Graph RAG, LLM evaluation, and FastAPI. Contributed to enterprise AI platforms involving clinical knowledge retrieval, multi-agent data structuring, safety guardrails, and natural-language-to-SQL workflows. Strong foundation in Python, machine learning, NLP, and LLM application engineering.",
+    "AI/ML Engineer with 2+ years of combined full-time, internship and freelance experience building enterprise Generative AI, agentic AI, and RAG systems for pharmaceutical and business intelligence use cases. Experienced in LangGraph, LangChain, CrewAI, MCP, Graph RAG, LLM evaluation, and FastAPI. Contributed to enterprise AI platforms involving clinical knowledge retrieval, multi-agent data structuring, safety guardrails, and natural-language-to-SQL workflows. Strong foundation in Python, machine learning, NLP, and LLM application engineering.",
   availableForFreelance: true,
   links: {
     linkedin: "https://www.linkedin.com/in/ksaikiran129/",
     github: "https://github.com/saikirankolchelma",
     email: "mailto:Ksaikiran129@gmail.com",
   },
-  /** Rough experience figure as stated on the resume. */
-  experienceLabel: "1+ years",
+  /**
+   * Experience figure, counting full-time, internship and freelance work.
+   * NOTE: the resume currently says "1+ years" and counts only employment.
+   * Keep the two in step — a recruiter comparing them will notice.
+   */
+  experienceLabel: "2+ years",
+  /** What that figure is counting. Used wherever the number is explained. */
+  experienceBasis: "full-time, internship and freelance work",
 } as const;
 
 export const education = [
