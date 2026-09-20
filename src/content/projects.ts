@@ -453,69 +453,6 @@ export const projects: Project[] = [
     repo: null,
     demo: null,
   },
-  {
-    slug: "ai-engineer-workspace",
-    name: "AI Engineer Portfolio & Personal AI Workspace",
-    tagline:
-      "This site — a portfolio with a Gemini-grounded assistant, plus a private task system that accepts work updates as plain-text messages from a phone.",
-    category: ["Personal", "Agentic AI", "RAG"],
-    origin: "Self-directed",
-    role: "Sole author — architecture, frontend, backend, database and AI integration.",
-    period: "2026 — Present",
-    status: "In Progress",
-    featured: false,
-    confidential: false,
-    tech: [
-      "Next.js",
-      "TypeScript",
-      "Tailwind CSS",
-      "PostgreSQL",
-      "Prisma",
-      "NextAuth",
-      "Google Gemini",
-      "Telegram Bot API",
-      "Vercel",
-    ],
-    problem:
-      "A portfolio that only lists work goes stale the moment it ships, and the daily record of what was actually built lives scattered across notes, chats and memory.",
-    why:
-      "Two things worth solving at once: recruiters and clients need a grounded way to ask questions about the work, and the author needs a low-friction way to capture daily engineering work from a phone without opening a task app.",
-    solution:
-      "A public portfolio with a Gemini-backed assistant answering strictly from verified profile content, and a private dashboard whose tasks can be created by sending an ordinary message — an LLM extracts the structured task from free text.",
-    architecture: [
-      "Public site — Next.js App Router, statically rendered content pages driven by a typed content layer.",
-      "Assistant — Gemini called server-side only, grounded in a curated portfolio knowledge base, with prompt-injection resistance and no access to private data.",
-      "Private dashboard — credential auth, task management, work journal and analytics.",
-      "Message ingestion — Telegram webhook → authorized-sender check → Gemini structured extraction → database.",
-      "Private assistant — question answering over the task history, behind authentication.",
-    ],
-    implementation: [
-      "Content layer holds verified profile facts in typed modules so the site and the assistant answer from the same source.",
-      "All model calls run server-side; no API key ever reaches the browser.",
-      "Public and private data paths are separated at the database and route level, so the public assistant cannot reach work records.",
-    ],
-    aiComponents: [
-      "Grounded portfolio Q&A (Gemini)",
-      "Voice interaction over the same assistant",
-      "Structured task extraction from free-text messages",
-      "Private assistant over personal work history",
-    ],
-    challenges: [
-      {
-        challenge:
-          "A public chatbot with access to a person's real data will eventually be asked to reveal something private.",
-        response:
-          "The public assistant is grounded only in curated public content and has no route to the private database.",
-      },
-    ],
-    results: [],
-    future: [
-      "Voice agent with speech-to-text and text-to-speech.",
-      "Weekly work summaries generated from the task history.",
-    ],
-    repo: null,
-    demo: null,
-  },
 ];
 
 export const projectCategories: ProjectCategory[] = [
