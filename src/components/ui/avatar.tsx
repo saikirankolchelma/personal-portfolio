@@ -3,24 +3,29 @@ import { profile } from "@/content/profile";
 import { cn } from "@/lib/utils";
 
 const sizes = {
-  sm: "h-28 w-28 sm:h-32 sm:w-32",
-  md: "h-40 w-40 sm:h-48 sm:w-48 lg:h-56 lg:w-56",
-  lg: "h-44 w-44 sm:h-56 sm:w-56 lg:h-64 lg:w-64",
+  sm: "h-32 w-32 sm:h-36 sm:w-36",
+  md: "h-48 w-48 sm:h-56 sm:w-56 lg:h-64 lg:w-64",
+  lg: "h-56 w-56 sm:h-64 sm:w-64 lg:h-80 lg:w-80",
 } as const;
 
-/** Rendered width in px per size, for the `sizes` hint. */
+/** Largest rendered width in px per size, for the `sizes` hint. */
 const widthHint = {
-  sm: "128px",
-  md: "224px",
-  lg: "256px",
+  sm: "144px",
+  md: "256px",
+  lg: "320px",
 } as const;
 
 /**
- * Circular portrait with a gradient ring.
+ * Circular portrait.
  *
- * The source is a tall portrait, so a square crop centred by default would cut
- * off the top of the head and fill the circle with chest. `object-position`
- * pulls the crop upward to sit the face in the middle of the frame.
+ * Deliberately restrained: two hairline rings with a gap between them, and a
+ * low-opacity bloom. A saturated gradient ring competes with the face for
+ * attention and reads as decoration — on a portfolio the photo should look
+ * like a headshot, not an avatar frame.
+ *
+ * The source is a tall portrait, so a square crop centred by default would
+ * clip the top of the head and fill the circle with jacket. `object-position`
+ * pulls the frame up to sit the face centrally.
  */
 export function Avatar({
   size = "md",
@@ -34,37 +39,44 @@ export function Avatar({
 }) {
   return (
     <div className={cn("relative inline-block", className)}>
-      {/* Accent bloom, sitting behind and slightly larger than the ring. */}
+      {/* Ambient light behind the portrait — present, but not a halo. */}
       <div
         aria-hidden
-        className="pointer-events-none absolute -inset-6 rounded-full opacity-70 blur-2xl"
+        className="pointer-events-none absolute -inset-10 rounded-full opacity-45 blur-3xl"
         style={{
           background: "radial-gradient(closest-side, var(--glow), transparent 70%)",
         }}
       />
 
-      {/* Gradient ring, with a bg-coloured gap so it reads as a ring rather
-          than a border sitting directly on the photo. */}
-      <div
-        className={cn(
-          "relative rounded-full p-[2.5px]",
-          "bg-[linear-gradient(140deg,var(--accent),var(--accent-2))]",
-          "shadow-[0_18px_50px_-20px_var(--glow)]",
-        )}
-      >
-        <div className="rounded-full bg-bg p-1">
-          <div className={cn("relative overflow-hidden rounded-full", sizes[size])}>
-            <Image
-              src="/sai-kiran.jpg"
-              alt={`${profile.name}, ${profile.title}`}
-              fill
-              priority={priority}
-              sizes={widthHint[size]}
-              className="object-cover"
-              // Faces sit high in a portrait crop; centre on the face, not the torso.
-              style={{ objectPosition: "center 18%" }}
-            />
-          </div>
+      {/* Outer hairline, offset by the padding to read as a ring. */}
+      <div className="relative rounded-full p-2 ring-1 ring-border">
+        <div
+          className={cn(
+            "relative overflow-hidden rounded-full",
+            "ring-1 ring-border-strong",
+            "shadow-[0_20px_60px_-24px_rgba(0,0,0,0.55)]",
+            sizes[size],
+          )}
+        >
+          <Image
+            src="/sai-kiran.jpg"
+            alt={`${profile.name}, ${profile.title}`}
+            fill
+            priority={priority}
+            sizes={widthHint[size]}
+            className="object-cover"
+            style={{ objectPosition: "center 18%" }}
+          />
+
+          {/* Faint vignette, so the photo's own grey background settles into
+              the page instead of ending at a hard circular edge. */}
+          <div
+            aria-hidden
+            className="pointer-events-none absolute inset-0 rounded-full"
+            style={{
+              boxShadow: "inset 0 -30px 45px -30px rgba(0,0,0,0.65)",
+            }}
+          />
         </div>
       </div>
     </div>
