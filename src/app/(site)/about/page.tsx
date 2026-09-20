@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import { ArrowRight, Award, GraduationCap, Briefcase, Sparkles } from "lucide-react";
 
 import { Reveal } from "@/components/ui/reveal";
@@ -34,25 +35,46 @@ export default function AboutPage() {
       <section className="relative overflow-hidden border-b border-border">
         <div aria-hidden className="pointer-events-none absolute inset-0 grid-bg" />
         <div className="container-px relative py-20 sm:py-28">
-          <div className="max-w-3xl">
-            <p className="mb-4 font-mono text-xs uppercase tracking-[0.2em] text-accent">
-              About
-            </p>
-            <h1 className="text-4xl font-semibold leading-[1.1] sm:text-5xl">
-              From a data science degree to building agentic systems in
-              production.
-            </h1>
-            <p className="mt-7 text-base leading-relaxed text-fg-muted sm:text-lg">
-              {profile.summary}
-            </p>
-            <div className="mt-9 flex flex-wrap gap-3">
-              <ButtonLink href="/experience">
-                See my experience
-                <ArrowRight className="h-4 w-4" />
-              </ButtonLink>
-              <ButtonLink href="/contact" variant="secondary">
-                Get in touch
-              </ButtonLink>
+          <div className="grid items-center gap-12 lg:grid-cols-[1.5fr_1fr] lg:gap-16">
+            <div>
+              <p className="mb-4 font-mono text-xs uppercase tracking-[0.2em] text-accent">
+                About
+              </p>
+              <h1 className="text-4xl font-semibold leading-[1.1] sm:text-5xl">
+                From a data science degree to building agentic systems in
+                production.
+              </h1>
+              <p className="mt-7 text-base leading-relaxed text-fg-muted sm:text-lg">
+                {profile.summary}
+              </p>
+              <div className="mt-9 flex flex-wrap gap-3">
+                <ButtonLink href="/experience">
+                  See my experience
+                  <ArrowRight className="h-4 w-4" />
+                </ButtonLink>
+                <ButtonLink href="/contact" variant="secondary">
+                  Get in touch
+                </ButtonLink>
+              </div>
+            </div>
+
+            {/* Portrait — hidden below lg, where the headline should lead and
+                the photo would only push the summary off-screen. */}
+            <div className="hidden lg:block">
+              <div className="relative overflow-hidden rounded-2xl border border-border bg-surface shadow-[0_24px_70px_-28px_var(--glow)]">
+                <Image
+                  src="/sai-kiran.jpg"
+                  alt={`${profile.name}, ${profile.title}`}
+                  width={768}
+                  height={1364}
+                  sizes="22rem"
+                  className="h-full w-full object-cover"
+                />
+                <div
+                  aria-hidden
+                  className="pointer-events-none absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-surface/90 to-transparent"
+                />
+              </div>
             </div>
           </div>
         </div>
