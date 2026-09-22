@@ -9,7 +9,6 @@ type Status = {
   assistant: string;
   voice: string;
   workspace: string;
-  model: string | null;
 };
 
 const services = [
@@ -99,16 +98,11 @@ export function LiveStatus() {
           })}
         </div>
 
-        {status.model ? (
-          <div className="border-t border-border bg-surface-2/60 px-5 py-3">
-            <p className="text-xs text-fg-subtle">
-              Assistant model:{" "}
-              <span className="font-mono text-fg-muted">{status.model}</span>
-              <span className="mx-2 text-border-strong">·</span>
-              Served server-side — the API key never reaches your browser.
-            </p>
-          </div>
-        ) : null}
+        <div className="border-t border-border bg-surface-2/60 px-5 py-3">
+          <p className="text-xs text-fg-subtle">
+            Model calls run server-side — the API key never reaches your browser.
+          </p>
+        </div>
       </Card>
     </div>
   );

@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 
-import { isGeminiConfigured, GEMINI_MODEL } from "@/lib/gemini";
+import { isGeminiConfigured } from "@/lib/gemini";
 import { isDatabaseConfigured } from "@/lib/db";
 import { projects } from "@/content/projects";
 import { interestAreas } from "@/content/ai-lab";
@@ -14,9 +14,12 @@ export const revalidate = 3600;
 /**
  * Public status of the live services on this site.
  *
- * Read by shields.io dynamic badges on the GitHub profile, so the README
- * shows what is actually running rather than a claim typed once and left to
- * rot.
+ * Read by the live status panel on the home page, so the site reports what is
+ * actually running rather than a claim typed once and left to rot.
+ *
+ * Reports only whether a capability is up, never how it is implemented —
+ * the model in use is an implementation detail that would date fast and
+ * tells a visitor nothing worth knowing.
  *
  * Strictly public data. Nothing here touches tasks, journal entries, notes,
  * inquiries or any other private table — it reports *whether* a capability is
@@ -36,7 +39,6 @@ export async function GET() {
       // Live capability status.
       assistant: assistantUp ? "online" : "offline",
       voice: assistantUp ? "enabled" : "disabled",
-      model: assistantUp ? GEMINI_MODEL : null,
       workspace: isDatabaseConfigured() ? "connected" : "offline",
 
       // Public content counts.
