@@ -66,3 +66,23 @@ export const goals = [
  * having anything guessed. The About page skips the section while it is empty.
  */
 export const personalInterests: { label: string; note?: string }[] = [];
+
+/**
+ * Personal voice — why this work, rather than what.
+ *
+ * Deliberately first-person and specific. The rest of the site explains what
+ * was built; this is the only place that says why it was worth building, and
+ * a concrete failure does more for credibility than any adjective.
+ */
+export const story = {
+  heading: "Why I'm in this",
+  lead: "I got into AI through the modelling and stayed for the engineering.",
+  body: [
+    "The part that keeps me here is not that a model can write a paragraph. It is that building a system around one forces you to answer questions software usually lets you dodge. How do you know it is right? What does it do when the tool call fails? What happens when someone tries to talk it out of its instructions?",
+    "Those are not prompt problems. They are architecture problems, and they are genuinely hard. So I spend my time on the layers that sound boring — retrieval that survives real queries, guardrails that hold, evaluation you can regress against — because that is the difference between a demo and something a pharmaceutical client can depend on.",
+  ],
+  pullQuote: {
+    label: "Favourite bug so far",
+    text: "A RAG pipeline that aced every lookup and quietly failed every comparative question. The answer was not in any chunk — it was in the relationships between them. That one rewrite taught me more than a year of tutorials.",
+  },
+};

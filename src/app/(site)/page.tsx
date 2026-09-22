@@ -8,6 +8,8 @@ import {
 } from "lucide-react";
 
 import { Hero } from "@/components/sections/hero";
+import { LiveStatus } from "@/components/sections/live-status";
+import { Story } from "@/components/sections/story";
 import { ProjectCard } from "@/components/sections/project-card";
 import { Reveal } from "@/components/ui/reveal";
 import {
@@ -41,6 +43,11 @@ export default function HomePage() {
   return (
     <>
       <Hero />
+
+      {/* Live service status, read from /api/status in the browser. */}
+      <div className="container-px pt-10 sm:pt-14">
+        <LiveStatus />
+      </div>
 
       {/* ---------------------------------------------------------- Stats */}
       <Section className="py-12 sm:py-16">
@@ -102,6 +109,8 @@ export default function HomePage() {
           </Link>
         </div>
       </Section>
+
+      <Story />
 
       {/* -------------------------------------------------------- Projects */}
       <Section id="projects" className="border-y border-border bg-bg-subtle">
