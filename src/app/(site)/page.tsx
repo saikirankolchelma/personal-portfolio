@@ -10,6 +10,7 @@ import {
 import { Hero } from "@/components/sections/hero";
 import { LiveStatus } from "@/components/sections/live-status";
 import { Story } from "@/components/sections/story";
+import { AgentGraph } from "@/components/sections/agent-graph";
 import { ProjectCard } from "@/components/sections/project-card";
 import { Reveal } from "@/components/ui/reveal";
 import {
@@ -110,6 +111,16 @@ export default function HomePage() {
       </Section>
 
       <Story />
+
+      {/* --------------------------------------------------- Agent graph */}
+      <Section className="border-t border-border">
+        <SectionHeading
+          eyebrow="How it fits together"
+          title="Agent orchestration, drawn"
+          description="A request reaches an orchestrator, which fans it out to specialised sub-agents. Each reaches a tool — an MCP server, a graph database — and results come back as one answer. This is the shape of the systems below."
+        />
+        <AgentGraph />
+      </Section>
 
       {/* -------------------------------------------------------- Projects */}
       <Section id="projects" className="border-y border-border bg-bg-subtle">
