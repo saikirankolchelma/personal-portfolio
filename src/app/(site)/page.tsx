@@ -44,10 +44,9 @@ export default function HomePage() {
     <>
       <Hero />
 
-      {/* Live service status, read from /api/status in the browser. */}
-      <div className="container-px pt-10 sm:pt-14">
-        <LiveStatus />
-      </div>
+      {/* Live service status, read from /api/status in the browser. It owns
+          its own spacing so it takes up no room until the fetch resolves. */}
+      <LiveStatus />
 
       {/* ---------------------------------------------------------- Stats */}
       <Section className="py-12 sm:py-16">

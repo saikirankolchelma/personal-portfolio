@@ -48,7 +48,7 @@ export function LiveStatus() {
   if (!status || failed) return null;
 
   return (
-    <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-3">
+    <div className="container-px flex flex-wrap items-center justify-center gap-x-6 gap-y-3 pt-10 sm:pt-14">
       <span className="flex items-center gap-2 font-mono text-[0.7rem] uppercase tracking-[0.16em] text-fg-subtle">
         <Activity className="h-3.5 w-3.5" aria-hidden />
         Live
