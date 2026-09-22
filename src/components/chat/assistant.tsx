@@ -1,9 +1,10 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { ArrowUp, Bot, Mic, RefreshCw, Sparkles, Square, Volume2, VolumeX, X } from "lucide-react";
+import { ArrowUp, Bot, Mic, RefreshCw, Square, Volume2, VolumeX, X } from "lucide-react";
 
 import { Button } from "@/components/ui/primitives";
+import { AgentOrb } from "@/components/chat/agent-orb";
 import {
   assistantDisclaimer,
   assistantIntro,
@@ -233,26 +234,7 @@ export function Assistant() {
 
   return (
     <>
-      {/* ------------------------------------------------- launcher button */}
-      <button
-        type="button"
-        onClick={() => setOpen((v) => !v)}
-        aria-expanded={open}
-        aria-controls="assistant-panel"
-        aria-label={open ? "Close AI assistant" : "Open AI assistant"}
-        className={cn(
-          "fixed bottom-5 right-5 z-50 grid h-14 w-14 place-items-center rounded-full",
-          "bg-accent text-accent-fg shadow-[0_8px_32px_-6px_var(--glow)]",
-          "transition-transform duration-300 hover:scale-105 active:scale-95",
-          open && "scale-0 opacity-0",
-        )}
-      >
-        <span
-          aria-hidden
-          className="absolute inset-0 rounded-full bg-accent animate-pulse-ring"
-        />
-        <Sparkles className="relative h-6 w-6" />
-      </button>
+      <AgentOrb open={open} onToggle={() => setOpen((v) => !v)} />
 
       {/* --------------------------------------------------------- panel */}
       <div

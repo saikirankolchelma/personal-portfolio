@@ -47,7 +47,7 @@ export type Project = {
 export const projects: Project[] = [
   {
     slug: "athena-agentic-platform",
-    name: "Athena — Enterprise Agentic AI Platform",
+    name: "Enterprise Agentic AI Platform",
     tagline:
       "Provider-agnostic LLM gateway, MCP tool servers, layered agent memory, guardrails and an LLM-as-judge evaluation harness.",
     category: ["Enterprise AI", "Agentic AI"],
@@ -140,7 +140,7 @@ export const projects: Project[] = [
     tagline:
       "A clinical Q&A retrieval system that moved from hybrid-search RAG to Graph RAG once relationship modeling became the real bottleneck.",
     category: ["RAG", "Enterprise AI"],
-    origin: "Avira Digital Technologies — BMS client",
+    origin: "Avira Digital Technologies — global pharmaceutical client",
     role: "ML Associate — built and evaluated the initial RAG pipeline, contributed to the Graph RAG redesign and the natural-language-to-query translation layers.",
     period: "2025 — 2026",
     status: "Delivered",
@@ -226,7 +226,7 @@ export const projects: Project[] = [
     tagline:
       "An orchestrator/sub-agent pipeline that turns raw multi-source data into tagged, queryable records — and answers questions about it in plain English.",
     category: ["Agentic AI", "Enterprise AI", "NLP"],
-    origin: "Avira Digital Technologies — BMS client",
+    origin: "Avira Digital Technologies — global pharmaceutical client",
     role: "ML Associate — developed the LangGraph sub-agents, the MCP schema/query tool servers, and the governance context integration.",
     period: "2026 — Present",
     status: "Active",

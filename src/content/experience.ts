@@ -45,7 +45,7 @@ export const experiences: Experience[] = [
       "Working on an enterprise agentic AI platform and client-facing retrieval systems for pharmaceutical and business intelligence use cases — agent orchestration, MCP tooling, safety guardrails, and evaluation.",
     workstreams: [
       {
-        name: "Enterprise Agentic AI Platform — Athena",
+        name: "Enterprise Agentic AI Platform",
         context:
           "Internal product. Contributed across R&D, design and implementation of the platform's agent orchestration, tooling and evaluation layers as part of the engineering team.",
         bullets: [
@@ -60,7 +60,7 @@ export const experiences: Experience[] = [
       },
       {
         name: "Clinical Knowledge Graph RAG",
-        client: "BMS Client",
+        client: "Global pharmaceutical client",
         context:
           "Research-facing Q&A over clinical trial, drug and disease data. Started as a traditional RAG pipeline and was redesigned as a Graph RAG once relationship modeling became the bottleneck.",
         bullets: [
@@ -72,7 +72,7 @@ export const experiences: Experience[] = [
       },
       {
         name: "Agentic Data Structuring & Query Platform",
-        client: "BMS Client",
+        client: "Global pharmaceutical client",
         context:
           "A multi-stage pipeline that ingests raw, multi-source data and restructures it into tagged, categorized records for downstream querying.",
         bullets: [
