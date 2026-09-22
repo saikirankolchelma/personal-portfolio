@@ -61,6 +61,27 @@ export default function AiLabPage() {
             </p>
           </div>
 
+          <div className="mt-10">
+            <Link
+              href="/ai-lab/retrieval-playground"
+              className="group flex flex-wrap items-center gap-4 rounded-[var(--radius-card)] border border-accent/30 bg-accent-soft p-5 transition-colors hover:border-accent/50"
+            >
+              <span className="grid h-11 w-11 shrink-0 place-items-center rounded-xl border border-accent/30 bg-surface text-accent">
+                <FlaskConical className="h-5 w-5" />
+              </span>
+              <span className="min-w-0 flex-1">
+                <span className="block text-base font-semibold text-fg">
+                  Try the Retrieval Playground
+                </span>
+                <span className="mt-1 block text-sm text-fg-muted">
+                  Real chunking and BM25 scoring on your own text — and the
+                  question that breaks it.
+                </span>
+              </span>
+              <ArrowRight className="h-4 w-4 shrink-0 text-accent transition-transform group-hover:translate-x-0.5" />
+            </Link>
+          </div>
+
           {/* Legend — makes the honesty of the labels explicit up front. */}
           <div className="mt-10 grid gap-3 sm:grid-cols-3">
             {(Object.keys(levelMeta) as InterestLevel[]).map((level) => (
