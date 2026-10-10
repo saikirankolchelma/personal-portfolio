@@ -3,42 +3,50 @@
 import { useId } from "react";
 
 /**
- * An animated orchestrator/sub-agent graph.
+ * An animated orchestrator/sub-agent architecture.
  *
- * This is the architecture described on the projects pages, drawn: a request
- * arrives, an orchestrator fans it out to specialised sub-agents, each reaches
- * a tool, and results return. Decorative animation on a portfolio is noise —
- * this earns its place by being the thing the work is actually about.
+ * This is the shape the project pages describe, drawn: a query passes input
+ * guardrails, reaches an orchestrator backed by layered memory, fans out to
+ * specialised sub-agents, each of which reaches a tool, and results are scored
+ * by a judge before returning. Decorative animation on a portfolio is noise —
+ * this earns its place by being what the work actually is.
  *
- * Built as inline SVG with CSS keyframes rather than canvas or a rAF loop:
- * nothing runs on the main thread, it scales to any width, and it costs no
- * JavaScript beyond rendering once.
+ * Inline SVG with CSS keyframes rather than canvas or a rAF loop: nothing runs
+ * on the main thread, it scales to any width, and it costs no JavaScript
+ * beyond the single render.
  */
+
+type Kind = "entry" | "guard" | "core" | "memory" | "agent" | "tool" | "judge";
 
 type Node = {
   id: string;
   label: string;
   x: number;
   y: number;
-  kind: "entry" | "core" | "agent" | "tool";
+  kind: Kind;
 };
 
 const NODES: Node[] = [
-  { id: "in", label: "Query", x: 40, y: 130, kind: "entry" },
-  { id: "orch", label: "Orchestrator", x: 190, y: 130, kind: "core" },
+  { id: "query", label: "Query", x: 48, y: 170, kind: "entry" },
+  { id: "gin", label: "Guardrails", x: 150, y: 170, kind: "guard" },
+  { id: "orch", label: "Orchestrator", x: 282, y: 170, kind: "core" },
+  { id: "mem", label: "Memory", x: 282, y: 58, kind: "memory" },
 
-  { id: "a1", label: "Sentiment", x: 370, y: 45, kind: "agent" },
-  { id: "a2", label: "Entities", x: 370, y: 130, kind: "agent" },
-  { id: "a3", label: "Clustering", x: 370, y: 215, kind: "agent" },
+  { id: "a1", label: "Sentiment", x: 460, y: 80, kind: "agent" },
+  { id: "a2", label: "Entities", x: 460, y: 170, kind: "agent" },
+  { id: "a3", label: "Clustering", x: 460, y: 260, kind: "agent" },
 
-  { id: "t1", label: "MCP tools", x: 545, y: 87, kind: "tool" },
-  { id: "t2", label: "Graph DB", x: 545, y: 173, kind: "tool" },
+  { id: "t1", label: "MCP tools", x: 638, y: 118, kind: "tool" },
+  { id: "t2", label: "Graph DB", x: 638, y: 222, kind: "tool" },
 
-  { id: "out", label: "Answer", x: 690, y: 130, kind: "entry" },
+  { id: "judge", label: "Judge", x: 772, y: 170, kind: "judge" },
+  { id: "out", label: "Answer", x: 872, y: 170, kind: "entry" },
 ];
 
 const EDGES: [string, string][] = [
-  ["in", "orch"],
+  ["query", "gin"],
+  ["gin", "orch"],
+  ["orch", "mem"],
   ["orch", "a1"],
   ["orch", "a2"],
   ["orch", "a3"],
@@ -46,21 +54,45 @@ const EDGES: [string, string][] = [
   ["a2", "t1"],
   ["a2", "t2"],
   ["a3", "t2"],
-  ["t1", "out"],
-  ["t2", "out"],
+  ["t1", "judge"],
+  ["t2", "judge"],
+  ["judge", "out"],
 ];
 
 const byId = Object.fromEntries(NODES.map((n) => [n.id, n]));
 
-const RADIUS: Record<Node["kind"], number> = {
-  entry: 7,
-  core: 16,
-  agent: 11,
-  tool: 11,
+const RADIUS: Record<Kind, number> = {
+  entry: 8,
+  guard: 12,
+  core: 19,
+  memory: 12,
+  agent: 13,
+  tool: 13,
+  judge: 13,
+};
+
+const FILL: Record<Kind, string> = {
+  entry: "var(--accent-2)",
+  guard: "var(--surface-2)",
+  core: "",
+  memory: "var(--surface-2)",
+  agent: "var(--surface-2)",
+  tool: "var(--surface-2)",
+  judge: "var(--surface-2)",
+};
+
+const STROKE: Record<Kind, string> = {
+  entry: "transparent",
+  guard: "var(--danger)",
+  core: "transparent",
+  memory: "var(--accent-2)",
+  agent: "var(--accent)",
+  tool: "var(--accent-2)",
+  judge: "var(--warning)",
 };
 
 export function AgentGraph() {
-  // Gradient ids must be unique if the component ever renders twice.
+  // Gradient ids must stay unique if this ever renders twice on a page.
   const uid = useId().replace(/:/g, "");
 
   return (
@@ -71,24 +103,80 @@ export function AgentGraph() {
       />
 
       <svg
-        viewBox="0 0 730 260"
+        viewBox="0 0 920 330"
         className="relative w-full"
         role="img"
-        aria-label="Animated diagram: a query reaches an orchestrator, which fans out to sentiment, entity and clustering sub-agents, each calling MCP tools or a graph database before results return as an answer."
+        aria-label="Architecture diagram: a query passes input guardrails to an orchestrator backed by layered memory, which fans out to sentiment, entity and clustering sub-agents. Each reaches an MCP tool server or a graph database, and results are scored by a judge before returning as an answer."
       >
         <defs>
-          <linearGradient id={`edge-${uid}`} x1="0" y1="0" x2="1" y2="0">
-            <stop offset="0%" stopColor="var(--accent)" stopOpacity="0.15" />
-            <stop offset="50%" stopColor="var(--accent)" stopOpacity="0.45" />
-            <stop offset="100%" stopColor="var(--accent-2)" stopOpacity="0.15" />
+          {/*
+            userSpaceOnUse, not the default objectBoundingBox. A perfectly
+            horizontal line has a zero-height bounding box, which makes an
+            objectBoundingBox gradient degenerate — the line silently vanishes.
+            Spanning the viewBox also gives every edge the same left-to-right
+            flow rather than restarting per segment.
+          */}
+          <linearGradient
+            id={`edge-${uid}`}
+            gradientUnits="userSpaceOnUse"
+            x1="0"
+            y1="0"
+            x2="920"
+            y2="0"
+          >
+            <stop offset="0%" stopColor="var(--accent)" stopOpacity="0.5" />
+            <stop offset="100%" stopColor="var(--accent-2)" stopOpacity="0.5" />
           </linearGradient>
+
           <radialGradient id={`core-${uid}`}>
             <stop offset="0%" stopColor="var(--accent)" />
             <stop offset="100%" stopColor="var(--accent-2)" />
           </radialGradient>
         </defs>
 
-        {/* ------------------------------------------------------- edges */}
+        {/* ------------------------------------------- sub-agent grouping */}
+        <g>
+          <rect
+            x="394"
+            y="36"
+            width="132"
+            height="268"
+            rx="16"
+            fill="var(--accent)"
+            fillOpacity="0.04"
+            stroke="var(--accent)"
+            strokeOpacity="0.22"
+            strokeDasharray="4 6"
+          />
+          <text
+            x="460"
+            y="26"
+            textAnchor="middle"
+            className="fill-[var(--accent)] font-mono text-[10px] uppercase tracking-[0.16em]"
+          >
+            Sub-agents
+          </text>
+          <text
+            x="460"
+            y="322"
+            textAnchor="middle"
+            className="fill-[var(--fg-subtle)] font-mono text-[9px]"
+          >
+            100+ specialised · one job each
+          </text>
+        </g>
+
+        {/* --------------------------------------------------- tool group */}
+        <text
+          x="638"
+          y="26"
+          textAnchor="middle"
+          className="fill-[var(--accent-2)] font-mono text-[10px] uppercase tracking-[0.16em]"
+        >
+          Tools
+        </text>
+
+        {/* -------------------------------------------------------- edges */}
         {EDGES.map(([from, to]) => {
           const a = byId[from]!;
           const b = byId[to]!;
@@ -112,7 +200,7 @@ export function AgentGraph() {
           return (
             <circle
               key={`p-${from}-${to}`}
-              r="3"
+              r="3.5"
               className="agent-packet"
               style={
                 {
@@ -120,26 +208,26 @@ export function AgentGraph() {
                   "--y1": `${a.y}px`,
                   "--x2": `${b.x}px`,
                   "--y2": `${b.y}px`,
-                  // Staggered so packets flow through the graph in waves
-                  // rather than all firing at once.
-                  animationDelay: `${(i % 5) * 0.55}s`,
+                  // Staggered by depth so packets move through the graph as a
+                  // wave instead of every edge firing at once.
+                  animationDelay: `${(i % 6) * 0.5}s`,
                 } as React.CSSProperties
               }
             />
           );
         })}
 
-        {/* ------------------------------------------------------- nodes */}
+        {/* -------------------------------------------------------- nodes */}
         {NODES.map((node, i) => (
           <g key={node.id}>
             {node.kind === "core" ? (
               <circle
                 cx={node.x}
                 cy={node.y}
-                r={RADIUS.core + 8}
+                r={RADIUS.core + 9}
                 fill="none"
                 stroke="var(--accent)"
-                strokeOpacity="0.25"
+                strokeOpacity="0.3"
                 strokeDasharray="3 5"
                 className="agent-ring"
                 style={{ transformOrigin: `${node.x}px ${node.y}px` }}
@@ -150,23 +238,27 @@ export function AgentGraph() {
               cx={node.x}
               cy={node.y}
               r={RADIUS[node.kind]}
-              fill={
-                node.kind === "core"
-                  ? `url(#core-${uid})`
-                  : node.kind === "entry"
-                    ? "var(--accent-2)"
-                    : "var(--surface-2)"
-              }
-              stroke={node.kind === "core" ? "none" : "var(--accent)"}
-              strokeOpacity={node.kind === "entry" ? 0 : 0.5}
+              fill={node.kind === "core" ? `url(#core-${uid})` : FILL[node.kind]}
+              stroke={STROKE[node.kind]}
+              strokeOpacity="0.65"
               strokeWidth="1.5"
-              className={node.kind === "agent" || node.kind === "tool" ? "agent-node" : undefined}
-              style={{ animationDelay: `${i * 0.4}s` }}
+              className={
+                node.kind === "agent" || node.kind === "tool"
+                  ? "agent-node"
+                  : undefined
+              }
+              style={{ animationDelay: `${i * 0.35}s` }}
             />
 
             <text
               x={node.x}
-              y={node.y + RADIUS[node.kind] + 15}
+              y={
+                // Memory sits above the orchestrator, so its label goes above
+                // too rather than colliding with the edge between them.
+                node.id === "mem"
+                  ? node.y - RADIUS[node.kind] - 8
+                  : node.y + RADIUS[node.kind] + 15
+              }
               textAnchor="middle"
               className="fill-[var(--fg-subtle)] font-mono text-[10px]"
             >

@@ -119,7 +119,7 @@ export default function HomePage() {
         <SectionHeading
           eyebrow="How it fits together"
           title="Agent orchestration, drawn"
-          description="A request reaches an orchestrator, which fans it out to specialised sub-agents. Each reaches a tool — an MCP server, a graph database — and results come back as one answer. This is the shape of the systems below."
+          description="A query clears input guardrails, reaches an orchestrator backed by short-term, long-term and episodic memory, and fans out to specialised sub-agents. Each reaches a tool — an MCP server, a graph database — and a judge scores the result before it returns. This is the shape of the systems below."
         />
         <AgentGraph />
       </Section>
