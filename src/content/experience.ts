@@ -120,7 +120,7 @@ export const experiences: Experience[] = [
 
 export const experienceHighlights = [
   { label: "Experience", value: "2+ yrs", note: "Full-time, internship & freelance" },
-  { label: "LangGraph agents built", value: "100+", note: "Multi-agent, orchestrator & deep agents" },
+  { label: "Agents built", value: "100+", note: "Multi-agent, orchestrator & deep agents" },
   { label: "Migration accuracy", value: "85–90%", note: "Tableau → Power BI" },
   { label: "Model providers integrated", value: "3", note: "OpenAI, watsonx, Llama" },
 ];
