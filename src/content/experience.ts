@@ -55,7 +55,7 @@ export const experiences: Experience[] = [
           "Built an LLM-as-judge evaluation harness that scores agent responses against a labeled query/response dataset.",
           "Implemented input/output safety guardrails covering PII/PHI, jailbreaks, harm, social bias, profanity, and prompt injection, alongside IBM Guardrails.",
           "Integrated external data and tool nodes spanning social platforms, medical sources (PubMed, DrugBank, ClinicalTrials.gov, FDA), and relational databases (PostgreSQL, MySQL).",
-          "Delivered a social-sentiment analytics workflow orchestrating agents to pull and analyze posts and comments across multiple platforms.",
+          "Built sports-data workflows that orchestrate agents to pull posts, comments and engagement signals from Instagram, X (Twitter), Facebook and YouTube, then run sentiment and thematic analysis across the combined set.",
         ],
       },
       {
@@ -76,7 +76,7 @@ export const experiences: Experience[] = [
         context:
           "A multi-stage pipeline that ingests raw, multi-source data and restructures it into tagged, categorized records for downstream querying.",
         bullets: [
-          "Developed 10+ specialized LangGraph agents for sentiment analysis, thematic clustering, and entity extraction within an orchestrator/sub-agent architecture.",
+          "Developed 100+ specialized LangGraph agents — multi-agent crews, orchestrator agents and deep agents — covering sentiment analysis, thematic clustering and entity extraction within an orchestrator/sub-agent architecture.",
           "Built MCP servers exposing schema-introspection and query-execution tools for natural-language-to-SQL workflows.",
           "Contributed to multi-stage data structuring pipelines using topic modeling to group related content before records are written to the database.",
           "Embedded business-logic and governance rules as structured context files to keep agent-generated answers aligned with client data-governance policy.",
@@ -120,7 +120,7 @@ export const experiences: Experience[] = [
 
 export const experienceHighlights = [
   { label: "Experience", value: "2+ yrs", note: "Full-time, internship & freelance" },
-  { label: "LangGraph agents built", value: "10+", note: "Orchestrator / sub-agent" },
+  { label: "LangGraph agents built", value: "100+", note: "Multi-agent, orchestrator & deep agents" },
   { label: "Migration accuracy", value: "85–90%", note: "Tableau → Power BI" },
   { label: "Model providers integrated", value: "3", note: "OpenAI, watsonx, Llama" },
 ];

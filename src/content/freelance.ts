@@ -44,7 +44,7 @@ export const services: Service[] = [
     description:
       "Multi-agent systems that do real work against real tools - orchestrator/sub-agent architectures rather than one prompt asked to do everything.",
     backedBy:
-      "Developed 10+ specialized LangGraph agents in an orchestrator/sub-agent architecture on enterprise client work.",
+      "Developed 100+ specialized LangGraph agents — multi-agent, orchestrator and deep-agent architectures — on enterprise client work.",
     deliverables: [
       "LangGraph / CrewAI orchestration",
       "Specialized sub-agents per concern",

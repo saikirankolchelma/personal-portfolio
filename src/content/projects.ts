@@ -91,7 +91,7 @@ export const projects: Project[] = [
       "Wired medical and social data sources in as tool nodes rather than bespoke pipelines, keeping ingestion uniform.",
       "Implemented the three memory tiers with distinct retention and retrieval behavior instead of a single undifferentiated history buffer.",
       "Layered the platform's own guardrails with IBM Guardrails so that a miss in one layer is still caught by the other.",
-      "Delivered a social-sentiment analytics workflow that orchestrates agents to pull and analyze posts and comments across multiple platforms.",
+      "Built sports-data workflows that orchestrate agents to pull posts, comments and engagement signals from Instagram, X (Twitter), Facebook and YouTube, then run sentiment and thematic analysis across the combined set.",
     ],
     aiComponents: [
       "Multi-provider LLM routing and model selection",
@@ -99,7 +99,7 @@ export const projects: Project[] = [
       "Short-term / long-term / episodic agent memory",
       "LLM-as-judge response scoring against labeled data",
       "Safety guardrails — PII/PHI, jailbreak, harm, bias, profanity, prompt injection",
-      "Agent-driven sentiment analysis across social sources",
+      "Agent-driven sentiment analysis across Instagram, X, Facebook and YouTube",
     ],
     challenges: [
       {
@@ -250,14 +250,14 @@ export const projects: Project[] = [
     architecture: [
       "Ingestion stage — raw, multi-source data collected into a common staging shape.",
       "Structuring stage — topic modeling groups related content before records are categorized.",
-      "Orchestrator/sub-agent layer — 10+ deep agents in LangGraph, each specialized: sentiment analysis, thematic clustering, entity extraction.",
+      "Orchestrator/sub-agent layer — 100+ agents in LangGraph spanning multi-agent crews, orchestrator agents and deep agents, each specialized: sentiment analysis, thematic clustering, entity extraction.",
       "Persistence — enriched, tagged records written to the database.",
       "MCP query layer — servers exposing schema-introspection and query-execution tools.",
       "Query stage — downstream agents translate natural-language questions into dynamic SQL against the introspected schema.",
       "Governance layer — business-logic and governance rules held as structured context files, constraining what agents may answer.",
     ],
     implementation: [
-      "Developed 10+ specialized LangGraph agents under an orchestrator/sub-agent architecture, so each enrichment concern stayed independently testable.",
+      "Developed 100+ specialized LangGraph agents under an orchestrator/sub-agent architecture — multi-agent crews, orchestrator agents and deep agents — so each enrichment concern stayed independently testable.",
       "Split enrichment across sentiment analysis, thematic clustering and entity extraction sub-agents rather than asking one agent to do all three.",
       "Applied topic modeling to group related content ahead of categorization.",
       "Built MCP servers exposing schema-introspection and query-execution tools so SQL generation targets the real, current schema.",
@@ -277,7 +277,7 @@ export const projects: Project[] = [
         challenge:
           "A single agent asked to structure, classify and extract at once is hard to debug and harder to improve.",
         response:
-          "An orchestrator delegating to 10+ narrow sub-agents, each with one responsibility and its own failure mode.",
+          "An orchestrator delegating to 100+ narrow sub-agents, each with one responsibility and its own failure mode.",
       },
       {
         challenge:
@@ -292,7 +292,7 @@ export const projects: Project[] = [
           "Governance and business-logic rules supplied as structured context, keeping answers inside client policy.",
       },
     ],
-    results: [{ label: "Specialized agents built", value: "10+" }],
+    results: [{ label: "Specialized agents built", value: "100+" }],
     future: [
       "Widen sub-agent coverage to additional enrichment dimensions.",
       "Tighten query-generation evaluation against a labeled question/SQL set.",
