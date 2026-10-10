@@ -27,8 +27,11 @@ export const profile = {
   },
   /**
    * Experience figure, counting full-time, internship and freelance work.
-   * NOTE: the resume currently says "1+ years" and counts only employment.
-   * Keep the two in step — a recruiter comparing them will notice.
+   *
+   * Deliberately broader than the resume's figure, which counts employment
+   * only. Both are correct for what they cover: a resume lists roles held, a
+   * portfolio covers everything actually built. `experienceBasis` below is
+   * rendered alongside the number so the scope is always stated, not implied.
    */
   experienceLabel: "2+ years",
   /** What that figure is counting. Used wherever the number is explained. */
