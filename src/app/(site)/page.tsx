@@ -1,10 +1,10 @@
 import Link from "next/link";
 import {
   ArrowRight,
-  Boxes,
   BrainCircuit,
   Database,
   ShieldCheck,
+  Waypoints,
 } from "lucide-react";
 
 import { Hero } from "@/components/sections/hero";
@@ -28,10 +28,12 @@ import { services } from "@/content/freelance";
 import { formatPeriod } from "@/lib/utils";
 
 /** Icons for the four capability cards, keyed to skill group ids. */
+/** Four of the skill groups, surfaced as cards. Agentic AI leads because it
+ *  is the specialism; the full list lives on the about page. */
 const capabilityIcons = {
+  agentic: Waypoints,
   genai: BrainCircuit,
   data: Database,
-  backend: Boxes,
   ml: ShieldCheck,
 } as const;
 
