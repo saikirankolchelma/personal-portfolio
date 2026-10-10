@@ -4,6 +4,7 @@ import { marqueeSkills } from "@/content/skills";
 import { availability } from "@/content/freelance";
 import { ButtonLink } from "@/components/ui/primitives";
 import { Avatar } from "@/components/ui/avatar";
+import { HeroConstellation } from "@/components/sections/hero-constellation";
 import { GithubIcon, LinkedinIcon } from "@/components/ui/brand-icons";
 
 export function Hero() {
@@ -11,6 +12,7 @@ export function Hero() {
     <section className="relative overflow-hidden">
       {/* Background: grid + a soft accent bloom behind the headline. */}
       <div aria-hidden className="pointer-events-none absolute inset-0 grid-bg" />
+      <HeroConstellation />
       <div
         aria-hidden
         className="pointer-events-none absolute left-1/2 top-[-10rem] h-[26rem] w-[52rem] -translate-x-1/2 rounded-full opacity-70 blur-[120px]"
