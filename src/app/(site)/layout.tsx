@@ -1,6 +1,7 @@
 import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
 import { Assistant } from "@/components/chat/assistant";
+import { Greeter } from "@/components/chat/greeter";
 
 /**
  * Chrome for the public site only.
@@ -23,6 +24,7 @@ export default function SiteLayout({ children }: LayoutProps<"/">) {
       </main>
       <Footer />
       <Assistant />
+      <Greeter />
     </>
   );
 }

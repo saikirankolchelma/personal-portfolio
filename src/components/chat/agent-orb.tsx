@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { Sparkles, X } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { GREETER_SEEN_KEY } from "@/components/chat/greeter";
 
 /**
  * The assistant's launcher: a living orb rather than a static button.
@@ -29,7 +30,16 @@ export function AgentOrb({
   useEffect(() => {
     if (open || dismissed) return;
     // Long enough that it arrives after the visitor has started reading.
-    const timer = setTimeout(() => setInvite(true), 7000);
+    const timer = setTimeout(() => {
+      // The voice greeter already said hello this session; one invitation
+      // is plenty.
+      try {
+        if (window.sessionStorage.getItem(GREETER_SEEN_KEY)) return;
+      } catch {
+        /* storage blocked — fall through and invite */
+      }
+      setInvite(true);
+    }, 7000);
     return () => clearTimeout(timer);
   }, [open, dismissed]);
 

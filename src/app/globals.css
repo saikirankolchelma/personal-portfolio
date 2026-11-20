@@ -257,3 +257,84 @@
   .constellation-link { animation: none; }
   .constellation-signal { animation: none; opacity: 0; }
 }
+
+/* ---------------------------------------------------------------
+   Hero agents. Labels for the 3D agents orbiting the network; the
+   scene positions them every frame with a transform.
+---------------------------------------------------------------- */
+.hero-agent-label {
+  position: absolute;
+  left: 0;
+  top: 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 9px 3px 7px;
+  border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--accent) 35%, transparent);
+  background: color-mix(in srgb, var(--surface) 72%, transparent);
+  backdrop-filter: blur(6px);
+  font: 500 10.5px/1.2 var(--font-mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--fg-muted);
+  white-space: nowrap;
+  will-change: transform, opacity;
+  transition: opacity 0.4s ease;
+}
+.hero-agent-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  background: var(--accent-2);
+  box-shadow: 0 0 8px var(--accent-2);
+}
+@media (max-width: 639px) {
+  .hero-agent-label { font-size: 8.5px; padding: 2px 7px 2px 5px; gap: 4px; }
+}
+
+/* ---------------------------------------------------------------
+   Holographic portrait: a rotating spectral ring, a scan line that
+   sweeps the cut-out, and chips that float around it.
+---------------------------------------------------------------- */
+@keyframes portrait-scan {
+  0%   { transform: translateY(-20%); opacity: 0; }
+  10%  { opacity: 1; }
+  60%  { opacity: 1; }
+  70%, 100% { transform: translateY(520%); opacity: 0; }
+}
+@keyframes chip-float {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-8px); }
+}
+
+.portrait-ring {
+  background: conic-gradient(from 0deg, var(--accent), var(--accent-2), transparent 40%, var(--accent) 70%, var(--accent-2), var(--accent));
+  -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 2px), #000 calc(100% - 2px));
+          mask: radial-gradient(farthest-side, transparent calc(100% - 2px), #000 calc(100% - 2px));
+}
+.portrait-scan {
+  animation: portrait-scan 5.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  /* Light theme: a faint pass, since screen-blending cyan over dark hair on
+     a white page reads as a stain rather than a scan. */
+  background: linear-gradient(to bottom, transparent, color-mix(in srgb, var(--accent-2) 8%, transparent) 70%, color-mix(in srgb, var(--accent-2) 22%, transparent) 96%, transparent);
+  mix-blend-mode: screen;
+}
+.dark .portrait-scan {
+  background: linear-gradient(to bottom, transparent, color-mix(in srgb, var(--accent-2) 22%, transparent) 70%, color-mix(in srgb, var(--accent-2) 55%, transparent) 96%, transparent);
+}
+.portrait-chip {
+  animation: chip-float 5s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .portrait-scan { animation: none; opacity: 0; }
+  .portrait-chip { animation: none; }
+}
+
+/* Rotating hero keyword: each new word rises into place. */
+@keyframes word-in {
+  from { opacity: 0; transform: translateY(70%); filter: blur(4px); }
+  to   { opacity: 1; transform: none; filter: none; }
+}
+.word-in { animation: word-in 0.55s cubic-bezier(0.16, 1, 0.3, 1) both; }

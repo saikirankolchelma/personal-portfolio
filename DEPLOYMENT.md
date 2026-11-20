@@ -143,6 +143,7 @@ git push -u origin main
 | `OWNER_PASSWORD` | your password |
 | `GEMINI_API_KEY` | your rotated key |
 | `GEMINI_MODEL` | `gemini-3.6-flash` |
+| `GEMINI_VOICE_MODEL` | `gemini-3.5-flash-lite` (optional; the default) |
 | `IP_HASH_SALT` | the value from your `.env.local` |
 | `NEXT_PUBLIC_SITE_URL` | leave this out for now — see below |
 

@@ -5,6 +5,7 @@ import { ThinkingLevel } from "@google/genai";
 
 import {
   GEMINI_MODEL,
+  GEMINI_VOICE_MODEL,
   buildSystemInstruction,
   getGeminiClient,
   isGeminiConfigured,
@@ -31,6 +32,10 @@ const chatSchema = z.object({
     .max(40)
     .optional()
     .default([]),
+  /** Which voice answers. The rules are identical for both. */
+  persona: z.enum(["assistant", "host"]).optional().default("assistant"),
+  /** The answer will be spoken: use the fast voice model. */
+  voice: z.boolean().optional().default(false),
 });
 
 export async function POST(request: Request) {
@@ -74,7 +79,8 @@ export async function POST(request: Request) {
     );
   }
 
-  const { message, history } = parsed.data;
+  const { message, history, persona, voice } = parsed.data;
+  const spoken = voice || persona === "host";
 
   // Only the most recent turns are replayed, and the history arrives from the
   // client — so it is treated as untrusted content, never as instruction. The
@@ -89,12 +95,13 @@ export async function POST(request: Request) {
 
   try {
     const stream = await getGeminiClient().models.generateContentStream({
-      model: GEMINI_MODEL,
+      model: spoken ? GEMINI_VOICE_MODEL : GEMINI_MODEL,
       contents,
       config: {
-        systemInstruction: buildSystemInstruction(),
-        maxOutputTokens: 800,
-        temperature: 0.4,
+        systemInstruction: buildSystemInstruction(persona),
+        // The host speaks its answers, so it is held to a few sentences.
+        maxOutputTokens: spoken ? 400 : 800,
+        temperature: persona === "host" ? 0.55 : 0.4,
         // Grounded lookup over a supplied document needs no deliberation, and
         // thinking tokens come out of the same budget as the answer.
         // Gemini 3.x replaced `thinkingBudget` with `thinkingLevel`; passing

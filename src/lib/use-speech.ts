@@ -66,6 +66,27 @@ function getRecognitionCtor(): SpeechRecognitionCtor | null {
 
 export type MicState = "idle" | "listening" | "denied" | "error";
 
+/**
+ * Best-sounding English voice the browser offers. Neural voices ("Natural"
+ * on Edge, Google's on Chrome, Samantha on Apple) sound far less robotic
+ * than the OS default. Returns null to keep the default.
+ */
+function pickNaturalVoice(): SpeechSynthesisVoice | null {
+  const voices = window.speechSynthesis.getVoices().filter((v) => v.lang.startsWith("en"));
+  const ranked = [
+    (v: SpeechSynthesisVoice) => /natural/i.test(v.name) && /en-(US|GB|IN)/i.test(v.lang),
+    (v: SpeechSynthesisVoice) => /natural/i.test(v.name),
+    (v: SpeechSynthesisVoice) => /^Google US English/i.test(v.name),
+    (v: SpeechSynthesisVoice) => /^Google UK English Female/i.test(v.name),
+    (v: SpeechSynthesisVoice) => /Samantha|Ava|Allison/i.test(v.name),
+  ];
+  for (const test of ranked) {
+    const match = voices.find(test);
+    if (match) return match;
+  }
+  return null;
+}
+
 export type SpeechSupport = {
   recognition: boolean;
   synthesis: boolean;
@@ -73,10 +94,16 @@ export type SpeechSupport = {
 
 export function useSpeech({
   onTranscript,
+  onWord,
+  naturalVoice = false,
   lang = "en-US",
 }: {
   /** Called once per finished utterance, with the transcribed text. */
   onTranscript: (text: string) => void;
+  /** Called at each word boundary while speaking — drives voice visuals. */
+  onWord?: () => void;
+  /** Prefer the most natural-sounding English voice available. */
+  naturalVoice?: boolean;
   lang?: string;
 }) {
   const [micState, setMicState] = useState<MicState>("idle");
@@ -84,11 +111,14 @@ export function useSpeech({
   const [speaking, setSpeaking] = useState(false);
 
   const recognition = useRef<SpeechRecognitionLike | null>(null);
+  const speechGeneration = useRef(0);
   // Keeps the latest callback without rebuilding the recognizer each render.
   const onTranscriptRef = useRef(onTranscript);
+  const onWordRef = useRef(onWord);
   useEffect(() => {
     onTranscriptRef.current = onTranscript;
-  }, [onTranscript]);
+    onWordRef.current = onWord;
+  }, [onTranscript, onWord]);
 
   /* ------------------------------------------------------- capability */
   // Derived from hydration rather than set in an effect: browser capabilities
@@ -199,40 +229,67 @@ export function useSpeech({
   }, []);
 
   /* ------------------------------------------------------- synthesis */
-  const speak = useCallback((text: string) => {
-    if (typeof window === "undefined" || !("speechSynthesis" in window)) return;
-
-    const clean = text
-      // Strip the markdown the assistant may emit so it is not read aloud.
-      .replace(/\*\*([^*]+)\*\*/g, "$1")
-      .replace(/`([^`]+)`/g, "$1")
-      .replace(/^\s*[-*]\s+/gm, "")
-      // Read paths as words rather than slashes.
-      .replace(/\/([a-z-]+)(\/[a-z-]+)?/g, (_m, a, b) =>
-        b ? `${a} ${String(b).slice(1)} page` : `${a} page`,
-      )
-      .trim();
-
-    if (!clean) return;
-
-    window.speechSynthesis.cancel();
-
-    const utterance = new SpeechSynthesisUtterance(clean);
-    utterance.lang = "en-US";
-    utterance.rate = 1.02;
-    utterance.pitch = 1;
-    utterance.onstart = () => setSpeaking(true);
-    utterance.onend = () => setSpeaking(false);
-    utterance.onerror = () => setSpeaking(false);
-
-    window.speechSynthesis.speak(utterance);
-  }, []);
+  // Speech is a queue of sentence-sized utterances. Chrome's network voices
+  // silently stop after roughly fifteen seconds of a single utterance, and a
+  // queue also lets a streaming answer start speaking at its first sentence.
+  // `speaking` is true while anything in the queue is unfinished; the
+  // generation counter discards events from a queue that has been cancelled.
+  const pending = useRef(0);
 
   const stopSpeaking = useCallback(() => {
     if (typeof window === "undefined") return;
+    speechGeneration.current++;
+    pending.current = 0;
     window.speechSynthesis?.cancel();
     setSpeaking(false);
   }, []);
+
+  /** Adds text to the end of the queue without interrupting what is playing. */
+  const enqueue = useCallback(
+    (text: string) => {
+      if (typeof window === "undefined" || !("speechSynthesis" in window)) return;
+      const clean = cleanForSpeech(text);
+      if (!clean) return;
+
+      const generation = speechGeneration.current;
+      const current = () => generation === speechGeneration.current;
+      const voice = naturalVoice ? pickNaturalVoice() : null;
+
+      for (const sentence of splitSentences(clean)) {
+        const utterance = new SpeechSynthesisUtterance(sentence);
+        utterance.lang = voice?.lang ?? "en-US";
+        if (voice) utterance.voice = voice;
+        utterance.rate = 1;
+        utterance.pitch = 1;
+        const done = () => {
+          if (!current()) return;
+          pending.current = Math.max(0, pending.current - 1);
+          if (pending.current === 0) setSpeaking(false);
+        };
+        utterance.onstart = () => current() && setSpeaking(true);
+        utterance.onend = done;
+        utterance.onerror = done;
+        utterance.onboundary = (event) => {
+          if (event.name === "word") onWordRef.current?.();
+        };
+        pending.current++;
+        window.speechSynthesis.speak(utterance);
+      }
+    },
+    [naturalVoice],
+  );
+
+  /** Replaces whatever is playing with `text`. */
+  const speak = useCallback(
+    (text: string) => {
+      stopSpeaking();
+      enqueue(text);
+    },
+    [stopSpeaking, enqueue],
+  );
+
+  /** True while queued speech has not finished — read at call time, not render. */
+  const isSpeechPending = useCallback(() => pending.current > 0, []);
 
   // Cancel any queued speech if the component goes away mid-sentence.
   useEffect(
@@ -250,6 +307,55 @@ export function useSpeech({
     startListening,
     stopListening,
     speak,
+    enqueue,
+    isSpeechPending,
     stopSpeaking,
+  };
+}
+
+/** Strips markdown and turns paths into words, so nothing odd is read aloud. */
+function cleanForSpeech(text: string) {
+  return text
+    .replace(/\*\*([^*]+)\*\*/g, "$1")
+    .replace(/`([^`]+)`/g, "$1")
+    .replace(/^\s*[-*•]\s+/gm, "")
+    // Read paths as words rather than slashes.
+    .replace(/\/([a-z-]+)(\/[a-z-]+)?/g, (_m, a, b) =>
+      b ? `${a} ${String(b).slice(1)} page` : `${a} page`,
+    )
+    .trim();
+}
+
+function splitSentences(text: string) {
+  return text.match(/[^.!?\n]+[.!?]*\s*/g)?.map((s) => s.trim()).filter(Boolean) ?? [text];
+}
+
+/**
+ * Speaks a streaming answer as it arrives: each time `feed` is called with
+ * the text so far, every newly completed sentence is queued; `flush` queues
+ * whatever is left at the end. The first sentence starts playing while the
+ * rest is still being generated, which is most of what makes a voice agent
+ * feel responsive.
+ */
+export function createSentenceFeeder(enqueue: (text: string) => void) {
+  let spoken = 0;
+  return {
+    feed(full: string) {
+      const rest = full.slice(spoken);
+      // A sentence is complete once its punctuation is followed by
+      // whitespace, so "Next.js" and "2.5" are never split.
+      const boundary = /[.!?]["')\]]?\s+|\n+/g;
+      let end = -1;
+      for (let m = boundary.exec(rest); m; m = boundary.exec(rest)) end = m.index + m[0].length;
+      if (end > 0) {
+        enqueue(rest.slice(0, end));
+        spoken += end;
+      }
+    },
+    flush(full: string) {
+      const rest = full.slice(spoken);
+      spoken = full.length;
+      if (rest.trim()) enqueue(rest);
+    },
   };
 }

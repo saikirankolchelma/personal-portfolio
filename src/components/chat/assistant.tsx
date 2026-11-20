@@ -145,7 +145,8 @@ export function Assistant() {
         const response = await fetch("/api/chat", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ message: text, history }),
+          // In voice mode the answer is read aloud, so ask for the fast model.
+          body: JSON.stringify({ message: text, history, voice: voiceMode }),
           signal: controller.signal,
         });
 

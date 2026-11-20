@@ -3,8 +3,9 @@ import { profile } from "@/content/profile";
 import { marqueeSkills } from "@/content/skills";
 import { availability } from "@/content/freelance";
 import { ButtonLink } from "@/components/ui/primitives";
-import { Avatar } from "@/components/ui/avatar";
-import { HeroConstellation } from "@/components/sections/hero-constellation";
+import { HeroPortrait } from "@/components/sections/hero-portrait";
+import { RotatingWords } from "@/components/ui/rotating-words";
+import { Hero3D } from "@/components/sections/hero-3d";
 import { GithubIcon, LinkedinIcon } from "@/components/ui/brand-icons";
 
 export function Hero() {
@@ -12,7 +13,7 @@ export function Hero() {
     <section className="relative overflow-hidden">
       {/* Background: grid + a soft accent bloom behind the headline. */}
       <div aria-hidden className="pointer-events-none absolute inset-0 grid-bg" />
-      <HeroConstellation />
+      <Hero3D />
       <div
         aria-hidden
         className="pointer-events-none absolute left-1/2 top-[-10rem] h-[26rem] w-[52rem] -translate-x-1/2 rounded-full opacity-70 blur-[120px]"
@@ -48,7 +49,16 @@ export function Hero() {
             <span aria-hidden className="text-border-strong">
               /
             </span>
-            <span className="text-fg-subtle">Generative AI & Agentic Systems</span>
+            <RotatingWords
+              className="text-fg-subtle"
+              words={[
+                "Generative AI & agentic systems",
+                "Multi-agent orchestration",
+                "LLM evaluation & guardrails",
+                "Graph RAG & retrieval",
+                "MCP tool servers",
+              ]}
+            />
           </p>
 
           <h1 className="text-4xl font-semibold leading-[1.06] sm:text-6xl lg:text-[4.25rem]">
@@ -110,7 +120,7 @@ export function Hero() {
 
         {/* ------------------------------------------------------ portrait */}
         <div className="animate-rise order-first flex justify-center lg:order-none lg:justify-end">
-          <Avatar size="lg" priority />
+          <HeroPortrait />
         </div>
         </div>
       </div>

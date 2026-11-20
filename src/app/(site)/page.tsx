@@ -11,8 +11,10 @@ import { Hero } from "@/components/sections/hero";
 import { LiveStatus } from "@/components/sections/live-status";
 import { Story } from "@/components/sections/story";
 import { AgentGraph } from "@/components/sections/agent-graph";
+import { VoiceAgent } from "@/components/sections/voice-agent";
 import { ProjectCard } from "@/components/sections/project-card";
 import { Reveal } from "@/components/ui/reveal";
+import { Tilt } from "@/components/ui/tilt";
 import {
   Badge,
   ButtonLink,
@@ -66,6 +68,19 @@ export default function HomePage() {
         </dl>
       </Section>
 
+      {/* ---------------------------------------------------- Voice agent */}
+      <Section id="voice" className="relative overflow-hidden border-y border-border bg-bg-subtle">
+        <div aria-hidden className="pointer-events-none absolute inset-0 grid-bg opacity-50" />
+        <div className="relative">
+          <SectionHeading
+            eyebrow="Voice agent · live demo"
+            title="Talk to my AI. It talks back."
+            description="A voice agent grounded in my portfolio. Your speech is transcribed in the browser, answered by the same Gemini-backed agent as the chat assistant, and spoken aloud — the orb follows your voice while it listens and each word while it speaks."
+          />
+          <VoiceAgent />
+        </div>
+      </Section>
+
       {/* ----------------------------------------------------- Capabilities */}
       <Section id="capabilities">
         <SectionHeading
@@ -78,24 +93,26 @@ export default function HomePage() {
           {capabilityGroups.map((group, i) => {
             const Icon = capabilityIcons[group.id];
             return (
-              <Reveal key={group.id} delay={i * 0.06}>
-                <Card className="h-full p-6 sm:p-7">
-                  <div className="mb-5 grid h-10 w-10 place-items-center rounded-xl border border-accent/25 bg-accent-soft text-accent">
-                    <Icon className="h-[1.15rem] w-[1.15rem]" />
-                  </div>
-                  <h3 className="text-base font-semibold">{group.label}</h3>
-                  <p className="mt-1.5 text-sm text-fg-muted">{group.note}</p>
-                  <div className="mt-5 flex flex-wrap gap-1.5">
-                    {group.items.slice(0, 7).map((item) => (
-                      <span
-                        key={item}
-                        className="rounded-md border border-border bg-surface-2 px-2 py-1 text-[0.7rem] text-fg-subtle"
-                      >
-                        {item}
-                      </span>
-                    ))}
-                  </div>
-                </Card>
+              <Reveal key={group.id} delay={i * 0.06} className="h-full">
+                <Tilt className="h-full">
+                  <Card className="h-full p-6 sm:p-7">
+                    <div className="mb-5 grid h-10 w-10 place-items-center rounded-xl border border-accent/25 bg-accent-soft text-accent">
+                      <Icon className="h-[1.15rem] w-[1.15rem]" />
+                    </div>
+                    <h3 className="text-base font-semibold">{group.label}</h3>
+                    <p className="mt-1.5 text-sm text-fg-muted">{group.note}</p>
+                    <div className="mt-5 flex flex-wrap gap-1.5">
+                      {group.items.slice(0, 7).map((item) => (
+                        <span
+                          key={item}
+                          className="rounded-md border border-border bg-surface-2 px-2 py-1 text-[0.7rem] text-fg-subtle"
+                        >
+                          {item}
+                        </span>
+                      ))}
+                    </div>
+                  </Card>
+                </Tilt>
               </Reveal>
             );
           })}
@@ -140,7 +157,7 @@ export default function HomePage() {
 
         <div className="grid gap-5 md:grid-cols-2">
           {featuredProjects.map((project, i) => (
-            <Reveal key={project.slug} delay={i * 0.06}>
+            <Reveal key={project.slug} delay={i * 0.06} className="h-full">
               <ProjectCard project={project} className="h-full" />
             </Reveal>
           ))}
@@ -224,13 +241,15 @@ export default function HomePage() {
 
         <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {services.slice(0, 6).map((service, i) => (
-            <Reveal key={service.id} delay={i * 0.05}>
-              <Card className="h-full p-6">
-                <h3 className="text-base font-semibold">{service.title}</h3>
-                <p className="mt-2.5 text-sm leading-relaxed text-fg-muted">
-                  {service.description}
-                </p>
-              </Card>
+            <Reveal key={service.id} delay={i * 0.05} className="h-full">
+              <Tilt className="h-full">
+                <Card className="h-full p-6">
+                  <h3 className="text-base font-semibold">{service.title}</h3>
+                  <p className="mt-2.5 text-sm leading-relaxed text-fg-muted">
+                    {service.description}
+                  </p>
+                </Card>
+              </Tilt>
             </Reveal>
           ))}
         </div>
